@@ -30,39 +30,64 @@ ID    | PRODUCTO                     | PRECIO
 }
 
 
-function crearPedido(cliente, productoId) {
+function crearPedido(cliente, productoId, menu) {
   const producto = menu.find(prod => prod.id === productoId);
 
   if (producto) {
-    pedidos.push({ cliente: cliente, producto: producto.nombre, precio: producto.precio });
-    console.log(`\n Pedido creado para ${cliente}: ${producto.nombre}`);
-  } else {
-    console.log("\n Producto no encontrado");
-  }
+    const pedido = {
+      cliente: cliente,
+      producto: producto.nombre,
+      precio: producto.precio
+    };
+
+    pedidos.push(pedido);
+    return pedido;
+  } 
+
+  return null;
 }
 
 
 function listarPedidos() {
-  console.log(`
-==================================================
-               LISTA DE PEDIDOS               
-==================================================`);
-
-  if (pedidos.length === 0) {
-    console.log("No hay pedidos registrados.");
-  } else {
-    pedidos.forEach(p => {
-      console.log(`Cliente: ${p.cliente} | Producto: ${p.producto} | Total: $${p.precio.toFixed(2)}`);
-    });
-  }
-  console.log(`==================================================`);
+  return pedidos;
 }
 
+module.exports = {
+  consultarmenu,
+  crearPedido,
+  listarPedidos,
+  mostrarPromociones,
+  mostrarProductosDisponibles
+};
 
-consultarmenu(menu);
+function mostrarPromociones(menu = []) {
+  console.log(`\nPROMOCIONES DEL DÍA (10%) `);
 
+  if (!menu.length) {
+    console.log("No hay productos disponibles.");
+    return;
+  }
 
-crearPedido("Carlos", 1);
-crearPedido("María", 3);  
+  const promociones = menu.map(prod => {
+    return {
+      nombre: prod.nombre,
+      precioOferta: prod.precio * 0.90
+    };
+  });
 
-listarPedidos();
+  promociones.forEach(promo => {
+    console.log(`• ${promo.nombre}: Oferta a $${promo.precioOferta.toFixed(2)}`);
+  });
+}
+
+function mostrarProductosDisponibles(menu = []) {
+  console.log(`\n PRODUCTOS DISPONIBLES`);
+
+  if (!menu.length) {
+    console.log("No hay productos disponibles.");
+    return;
+  }
+
+  const listaNombres = menu.map(prod => prod.nombre);
+  console.log(`Disponibles: ${listaNombres.join(", ")}`);
+}
